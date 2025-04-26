@@ -20,14 +20,6 @@ Features/
 ```
 
 - Types and Interfaces should be stored in relative namespaces (Controllers, Services, Resources, GameData) to maintain clear dependencies
-- The project structure MUST follow the following structure required by roblox-ts:
-
-```
-src/
-/client (code that only runs on the client)
-/server (code that only runs on the server)
-/shared (code accessible by both client and server)
-```
 
 ## Requirements (toolings):
 
