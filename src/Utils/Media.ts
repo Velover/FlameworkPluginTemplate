@@ -46,11 +46,6 @@ class MediaQueryBuilder {
 		return this;
 	}
 
-	// "and" keyword for readability in chaining
-	public and(): MediaQueryBuilder {
-		return this;
-	}
-
 	public matches(): boolean {
 		return this.conditions.every((condition) => {
 			if (condition.Type === EMediaType.MinWidth) {
