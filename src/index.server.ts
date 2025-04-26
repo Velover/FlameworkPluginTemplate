@@ -1,6 +1,5 @@
-const toolbar = plugin.CreateToolbar("MyToolbar");
-const button = toolbar.CreateButton("MyButton", "", "");
+import { Flamework } from "@flamework/core";
+import { LoadModules } from "FlameworkIntegration";
 
-button.Click.Connect(() => {
-	print("Button clicked!");
-});
+LoadModules(script.WaitForChild("Features", 20) as Instance);
+Flamework.ignite();

@@ -1,9 +1,6 @@
 {
 	"name": "roblox-ts-plugin",
-	"globIgnorePaths": [
-		"**/package.json",
-		"**/tsconfig.json"
-	],
+	"globIgnorePaths": ["**/package.json", "**/tsconfig.json"],
 	"tree": {
 		"$path": "out",
 		"include": {
@@ -12,6 +9,9 @@
 				"$className": "Folder",
 				"@rbxts": {
 					"$path": "node_modules/@rbxts"
+				},
+				"@flamework": {
+					"$path": "node_modules/@flamework"
 				}
 			}
 		}
