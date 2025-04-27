@@ -4,8 +4,6 @@ import { createRoot } from "@rbxts/react-roblox";
 import { Controller } from "FlameworkIntegration";
 import { GetPlugin } from "Utils/PluginGetting";
 import { App } from "../UI/App";
-import { atom } from "@rbxts/charm";
-import { useAtom } from "@rbxts/react-charm";
 
 @Controller({})
 export class PluginUiController implements OnInit, OnStart {
@@ -31,15 +29,11 @@ export class PluginUiController implements OnInit, OnStart {
 	private _widget!: DockWidgetPluginGui;
 	private _toolbar!: PluginToolbar;
 	private _toolbarButton!: PluginToolbarButton;
-	private _widgetSizeAtom = atom(new Vector2(200, 200));
 
 	constructor() {}
 	onInit(): void {
 		this._widget = GetPlugin().CreateDockWidgetPluginGui(this.PLUGIN_WIDGET_ID, this._widgetInfo);
 		this.SetTitle(this.PLUGIN_DEFAULT_WIDGET_TITLE);
-		this._widget.GetPropertyChangedSignal("AbsoluteSize").Connect(() => {
-			this._widgetSizeAtom(this._widget.AbsoluteSize);
-		});
 
 		this._toolbar = GetPlugin().CreateToolbar(this.PLUGIN_TOOLBAR_ID);
 		this._toolbarButton = this._toolbar.CreateButton(
@@ -62,8 +56,5 @@ export class PluginUiController implements OnInit, OnStart {
 	}
 	public ToggleEnabled(): void {
 		this.SetEnabled(!this._widget.Enabled);
-	}
-	public useWidgetSize(): Vector2 {
-		return useAtom(this._widgetSizeAtom);
 	}
 }
