@@ -1,5 +1,6 @@
-import { OnInit, OnStart } from "@flamework/core";
+import { Controller, OnInit, OnStart } from "@flamework/core";
 
+@Controller({})
 export class GreetingController implements OnInit, OnStart {
 	constructor() {}
 

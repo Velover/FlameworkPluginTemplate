@@ -1,6 +1,7 @@
 # Flamework-based Template for Plugins
 
 ### Start
+
 ```bash
 #bun
 bunx degit https://github.com/Velover/FlameworkPluginTemplate .
