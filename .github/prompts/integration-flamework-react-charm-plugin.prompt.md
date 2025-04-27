@@ -1,12 +1,12 @@
-# Integration of @flamework/core, @rbxts/react, and @rbxts/charm
+# Integration of @flamework/core, @rbxts/react, and @rbxts/charm for Plugins
 
-This integration combines Flamework's structured controller system with React's UI components and Charm's state management to create a robust application architecture for Roblox TypeScript projects.
+This integration combines Flamework's structured controller system with React's UI components and Charm's state management to create a robust architecture for Roblox TypeScript plugins.
 
 ## Required Packages
 
 For full integration, you'll need these packages:
 
-- @flamework/core - For controller, service, and system structure
+- @flamework/core - For controller structure
 - @rbxts/react - For React-like UI components
 - @rbxts/react-roblox - For React portal rendering
 - @rbxts/charm - For state management
@@ -15,7 +15,7 @@ For full integration, you'll need these packages:
 
 ## Controller-Based State Management
 
-Flamework controllers serve as state containers and business logic handlers:
+Flamework controllers serve as state containers and business logic handlers for plugins:
 
 ```ts
 import { Controller, OnStart, OnInit } from "@flamework/core";
@@ -23,32 +23,32 @@ import { atom } from "@rbxts/charm";
 import { useAtom } from "@rbxts/react-charm";
 
 @Controller({})
-export class ShopMenuController implements OnStart, OnInit {
-  private readonly _isMenuVisibleAtom = atom(false);
-  private readonly _otherValueAtom = atom(0); // Example of another atom
+export class PluginMenuController implements OnStart, OnInit {
+	private readonly _isMenuVisibleAtom = atom(false);
+	private readonly _otherValueAtom = atom(0); // Example of another atom
 
-  onInit() {
-    // Initialization logic
-  }
+	onInit() {
+		// Initialize plugin widgets, toolbars, etc.
+	}
 
-  onStart() {
-    // Setup logic after dependencies are available
-  }
+	onStart() {
+		// Setup logic after dependencies are available
+	}
 
-  // Get atom value from outside UI
-  public GetMenuVisibleAtom() {
-    return this._isMenuVisibleAtom();
-  }
+	// Get atom value from outside UI
+	public GetMenuVisibleAtom() {
+		return this._isMenuVisibleAtom();
+	}
 
-  // Set atom value from anywhere
-  public SetMenuVisible(value: boolean) {
-    this._isMenuVisibleAtom(value);
-  }
+	// Set atom value from anywhere
+	public SetMenuVisible(value: boolean) {
+		this._isMenuVisibleAtom(value);
+	}
 
-  // React hook for components
-  public useMenuVisibleAtom() {
-    return useAtom(this._isMenuVisibleAtom);
-  }
+	// React hook for components
+	public useMenuVisibleAtom() {
+		return useAtom(this._isMenuVisibleAtom);
+	}
 }
 ```
 
@@ -59,27 +59,28 @@ React components can access controller state through custom hooks:
 ```tsx
 import React from "@rbxts/react";
 import { useFlameworkDependency } from "@rbxts/flamework-react-utils";
-import { ShopMenuController } from "path/to/controller";
+import { PluginMenuController } from "path/to/controller";
 
-function ShopMenu() {
-  // Access controller with memoization
-  const shopMenuController = useFlameworkDependency();
+function PluginMenu() {
+	// Access controller with memoization
+	const pluginMenuController = useFlameworkDependency<PluginMenuController>();
 
-  // Use the controller's atom hook
-  const isVisible = shopMenuController.useMenuVisibleAtom();
+	// Use the controller's atom hook
+	const isVisible = pluginMenuController.useMenuVisibleAtom();
 
-  return (
-
-       shopMenuController.SetMenuVisible(!isVisible)
-        }}
-      />
-      {isVisible && (
-
-          {/* Shop content */}
-
-      )}
-
-  );
+	return (
+		<frame>
+			<textbutton
+				Text="Toggle Menu"
+				Event={{
+					MouseButton1Click: () => {
+						pluginMenuController.SetMenuVisible(!isVisible);
+					},
+				}}
+			/>
+			{isVisible && <frame>{/* Plugin content */}</frame>}
+		</frame>
+	);
 }
 ```
 
@@ -89,32 +90,36 @@ UI should be initialized within a Flamework controller to ensure proper dependen
 
 ```ts
 import { Controller, OnStart, OnInit } from "@flamework/core";
-import { Players } from "@rbxts/services";
 import React from "@rbxts/react";
-import { createRoot, createPortal } from "@rbxts/react-roblox";
+import { createRoot } from "@rbxts/react-roblox";
 import { App } from "path/to/app";
+import { GetPlugin } from "Utils/PluginGetting";
 
 @Controller({})
 export class UIController implements OnStart, OnInit {
-  onInit() {
-    // Pre-dependency initialization
-  }
+	private _widget!: DockWidgetPluginGui;
 
-  onStart() {
-    // Initialize React after Flamework has set up all controllers
-    const playerGui = Players.LocalPlayer.WaitForChild("PlayerGui");
-    const container = new Instance("Folder");
-    container.Name = "ReactRoot";
-    container.Parent = playerGui;
+	onInit() {
+		// Create plugin widget
+		const widgetInfo = new DockWidgetPluginGuiInfo(
+			Enum.InitialDockState.Float,
+			false,
+			true,
+			200,
+			300,
+			150,
+			150,
+		);
 
-    // Create React root in the Controller to ensure proper Flamework lifecycle integration
-    const root = createRoot(container);
-    root.render(
+		this._widget = GetPlugin().CreateDockWidgetPluginGui("PluginWidgetId", widgetInfo);
+		this._widget.Title = "Plugin Widget";
+	}
 
-        {createPortal(, playerGui)}
-
-    );
-  }
+	onStart() {
+		// Initialize React after Flamework has set up all controllers
+		const root = createRoot(this._widget);
+		root.render(React.createElement(App));
+	}
 }
 ```
 
@@ -128,7 +133,7 @@ export class UIController implements OnStart, OnInit {
 
 4. **Atom Naming**: Follow the convention of adding "Atom" as a suffix to atom variables and functions that can be subscribed to.
 
-5. **Error Handling**: Add appropriate error handling when accessing services or when UI components depend on data that might not be immediately available.
+5. **Error Handling**: Add appropriate error handling when accessing controllers or when UI components depend on data that might not be immediately available.
 
 6. **Side Effects**: Use Charm's `effect` utility for handling side effects outside of React components:
 
@@ -136,22 +141,22 @@ export class UIController implements OnStart, OnInit {
 import { effect } from "@rbxts/charm";
 
 @Controller({})
-export class GameStateController {
-  private readonly _gameStateAtom = atom("lobby");
+export class PluginStateController {
+	private readonly _pluginStateAtom = atom("idle");
 
-  onStart() {
-    // React to state changes outside of UI components
-    effect(() => {
-      const gameState = this._gameStateAtom();
-      print(`Game state changed to: ${gameState}`);
+	onStart() {
+		// React to state changes outside of UI components
+		effect(() => {
+			const pluginState = this._pluginStateAtom();
+			print(`Plugin state changed to: ${pluginState}`);
 
-      // Return cleanup function if needed
-      return () => {
-        print("Cleaning up previous state");
-      };
-    });
-  }
+			// Return cleanup function if needed
+			return () => {
+				print("Cleaning up previous state");
+			};
+		});
+	}
 }
 ```
 
-This integration pattern creates a clean separation of concerns: Flamework handles game structure and business logic, React manages UI rendering, and Charm provides reactive state management that works across both systems.
+This integration pattern creates a clean separation of concerns: Flamework handles plugin structure and business logic, React manages UI rendering, and Charm provides reactive state management that works across both systems.
