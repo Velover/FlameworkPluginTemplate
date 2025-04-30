@@ -1,12 +1,12 @@
 import { OnInit, OnStart } from "@flamework/core";
 import React from "@rbxts/react";
-import { createRoot } from "@rbxts/react-roblox";
-import { Controller } from "FlameworkIntegration";
+import ReactRoblox, { createRoot } from "@rbxts/react-roblox";
+import { Controller, OnUnload } from "FlameworkIntegration";
 import { GetPlugin } from "Utils/PluginGetting";
 import { App } from "../UI/App";
 
 @Controller({})
-export class PluginUiController implements OnInit, OnStart {
+export class PluginUiController implements OnInit, OnStart, OnUnload {
 	private readonly PLUGIN_WIDGET_ID = "SomePluginId";
 	private readonly PLUGIN_DEFAULT_WIDGET_TITLE = "Plugin Title";
 
@@ -29,8 +29,12 @@ export class PluginUiController implements OnInit, OnStart {
 	private _widget!: DockWidgetPluginGui;
 	private _toolbar!: PluginToolbar;
 	private _toolbarButton!: PluginToolbarButton;
+	private _root?: ReactRoblox.Root;
 
 	constructor() {}
+	onUnload(): void {
+		this._root?.unmount();
+	}
 	onInit(): void {
 		this._widget = GetPlugin().CreateDockWidgetPluginGui(this.PLUGIN_WIDGET_ID, this._widgetInfo);
 		this.SetTitle(this.PLUGIN_DEFAULT_WIDGET_TITLE);
@@ -45,9 +49,10 @@ export class PluginUiController implements OnInit, OnStart {
 		this._toolbarButton.Click.Connect(() => this.ToggleEnabled());
 	}
 	onStart(): void {
-		const root = createRoot(this._widget);
-		root.render(React.createElement(App));
+		this._root = createRoot(this._widget);
+		this._root.render(React.createElement(App));
 	}
+
 	public SetTitle(title: string): void {
 		this._widget["Title" as never] = title as never;
 	}
