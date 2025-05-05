@@ -38,8 +38,8 @@ export class PluginUiController implements OnInit, OnStart {
 		this._toolbar = GetPlugin().CreateToolbar(this.PLUGIN_TOOLBAR_ID);
 		this._toolbarButton = this._toolbar.CreateButton(
 			this.PLUGIN_BUTTON_ID,
-			this.PLUGIN_BUTTON_ICON_ID,
 			this.PLUGIN_BUTTON_TOOLTIP,
+			this.PLUGIN_BUTTON_ICON_ID,
 			this.PLUGIN_BUTTON_TEXT,
 		);
 		this._toolbarButton.Click.Connect(() => this.ToggleEnabled());
