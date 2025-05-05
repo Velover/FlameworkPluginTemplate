@@ -1,4 +1,4 @@
-import { Flamework } from "@flamework/core";
+import { Flamework, Modding } from "@flamework/core";
 import { LoadModules } from "FlameworkIntegration";
 import { SetPlugin } from "Utils/PluginGetting";
 
