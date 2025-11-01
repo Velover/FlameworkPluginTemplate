@@ -5,7 +5,7 @@
   "main": "index.js",
   "devDependencies": {
     "@rbxts/compiler-types": "^3.0.0-types.0",
-    "@rbxts/types": "^1.0.849",
+    "@rbxts/types": "^1.0.888",
     "@typescript-eslint/eslint-plugin": "^8.31.0",
     "@typescript-eslint/parser": "^8.31.0",
     "eslint": "^8.57.1",
@@ -13,9 +13,9 @@
     "eslint-plugin-prettier": "^5.2.6",
     "eslint-plugin-roblox-ts": "^0.0.36",
     "prettier": "^3.5.3",
-    "rbxts-transformer-flamework": "^1.3.1",
+    "rbxts-transformer-flamework": "^1.3.2",
     "roblox-ts": "^3.0.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.3"
   },
   "description": "",
   "keywords": [],
@@ -25,12 +25,12 @@
     "watch": "rbxtsc -w --verbose"
   },
   "dependencies": {
-    "@flamework/core": "^1.3.1",
+    "@flamework/core": "^1.3.2",
     "@rbxts/charm": "^0.10.0",
-    "@rbxts/flamework-react-utils": "^1.0.6",
+    "@rbxts/flamework-react-utils": "^1.0.8",
     "@rbxts/react": "^17.2.3",
     "@rbxts/react-charm": "^0.3.0",
     "@rbxts/react-roblox": "^17.2.3",
-    "@rbxts/services": "^1.5.5"
+    "@rbxts/services": "^1.6.0"
   }
 }
