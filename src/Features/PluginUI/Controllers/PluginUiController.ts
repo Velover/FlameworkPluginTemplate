@@ -37,6 +37,8 @@ export class PluginUiController implements OnInit, OnStart, OnUnload {
 	}
 	onInit(): void {
 		this._widget = GetPlugin().CreateDockWidgetPluginGui(this.PLUGIN_WIDGET_ID, this._widgetInfo);
+		this._widget.ZIndexBehavior = Enum.ZIndexBehavior.Sibling;
+		
 		this.SetTitle(this.PLUGIN_DEFAULT_WIDGET_TITLE);
 
 		this._toolbar = GetPlugin().CreateToolbar(this.PLUGIN_TOOLBAR_ID);
